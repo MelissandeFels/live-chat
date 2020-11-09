@@ -1,18 +1,141 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
-  <head>
-    <meta charset="utf-8" />
-    <title>Live Chat</title>
-  </head>
-  <body>
-    <!-- Code Here -->
-    <script src="/socket.io/socket.io.js"></script>
-    <script type="text/javascript">
-      var socket = io();
 
-      socket.on("chat message", function(msg) {
-        console.log(msg);
+<head>
+  <meta charset="utf-8" />
+  <title>Live Chat</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300&display=swap" rel="stylesheet">
+</head>
+<style>
+  body {
+    background: linear-gradient(#e66465, #9198e5);
+    font-family: 'Nunito', sans-serif;
+  }
+
+  h2 {
+    max-width: 600px;
+    margin: 20px auto;
+    padding: 10px 0;
+    text-align: center;
+    border: 4px dotted #000000;
+  }
+
+  #main-window {
+    max-width: 700px;
+    margin: 30px auto;
+    border: 1px solid #ffffff;
+    box-shadow: 1px 3px 5px rgba(0, 0, 0, 0.05);
+    border-radius: 5px;
+    background-color: #1d3557;
+  }
+
+  #chat-window {
+    height: 500px;
+    width: 700px;
+    overflow: auto;
+    word-break: break-all;
+    background-color: #edf6f9;
+  }
+
+  .output p {
+    color: #000000;
+    background-color: #90e0ef;
+    padding: 10px;
+  }
+
+  #feedback p {
+    color: #000000;
+    background-color: #fff;
+    padding: 10px;
+  }
+
+  .output strong {
+    color: #575ed8;
+  }
+
+  .chat-message {
+    margin: 10px;
+  }
+
+  .chat-message>input {
+    height: 40px;
+    width: 500px;
+    margin: 0;
+  }
+
+  .chat-message>button {
+    width: 60px;
+    color: #1d3557;
+    font-weight: bold;
+    background-color: #52b788;
+    border: none;
+    border-radius: 3px;
+    padding: 5px;
+    margin-left: 20px;
+  }
+
+  .chat-message>button:hover {
+    background-color: #00b4d8;
+    color: #ffffff;
+  }
+
+  #avatar {
+    padding: 10px;
+  }
+</style>
+
+<body>
+  <h2>LIVE CHAT</h2>
+
+  <div id="main-window">
+    <div id="chat-window">
+      <div class="output"></div>
+      <div id="feedback"></div>
+    </div>
+    <div class="chat-message">
+      <span id="avatar"><img src="avatar.png" style="height: 50px; width: 50px;"></span>
+      <input id="message" type="text" placeholder="message..">
+      <button id="send" type="button">Send</button>
+    </div>
+  </div>
+  <!-- Code Here -->
+  <script src="/socket.io/socket.io.js"></script>
+  <script type="text/javascript">
+    // Connection
+    var socket = io();
+
+    // Variables declares 
+    var chatWindow = document.getElementById("chat-window");
+    var message = document.getElementById("message");
+    var button = document.getElementById("send");
+    var output = document.getElementsByClassName("output")[0];
+    var feedback = document.getElementById("feedback");
+   // var avatar = document.getElementById("avatar").src;
+
+    // function to send a message  
+    function sendMessage() {
+      event.preventDefault();
+      socket.emit("chat message", {
+        message: message.value,
       });
-    </script>
-  </body>
+    };
+
+    button.addEventListener("click", sendMessage);
+
+    // function to display
+    socket.on("chat message", function (msg) {
+      output.innerHTML += "<p>" + msg.message + "</p>";
+      console.log(msg);
+    });
+
+    // Scroll
+    chatWindow.scroll(0, 1000);
+    chatWindow.scroll({
+      top: 100,
+      left: 0,
+      behavior: 'smooth'
+    });
+  </script>
+</body>
+
 </html>
